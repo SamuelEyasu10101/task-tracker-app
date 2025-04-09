@@ -115,6 +115,7 @@
       <!-- Tasks will appear here -->
     </div>
   </div>
+<<<<<<< HEAD
 
   <script>
     function addTask() {
@@ -153,5 +154,57 @@
       input.value = '';
     }
   </script>
+=======
+  <script>
+    async function fetchTasks() {
+      const res = await fetch('http://localhost:3000/tasks');
+      const tasks = await res.json();
+      const taskList = document.getElementById('taskList');
+      taskList.innerHTML = '';
+      tasks.forEach(task => {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'task' + (task.completed ? ' completed' : '');
+        taskDiv.innerHTML = `
+          <span>${task.text}</span>
+          <div class="task-actions">
+            <button onclick="toggleTask('${task.id}', ${!task.completed})">✓</button>
+            <button onclick="deleteTask('${task.id}')">🗑</button>
+          </div>`;
+        taskList.appendChild(taskDiv);
+      });
+    }
+  
+    async function addTask() {
+      const input = document.getElementById('taskInput');
+      const text = input.value.trim();
+      if (!text) return;
+      await fetch('http://localhost:3000/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      input.value = '';
+      fetchTasks();
+    }
+  
+    async function toggleTask(id, completed) {
+      await fetch(`http://localhost:3000/tasks/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed })
+      });
+      fetchTasks();
+    }
+  
+    async function deleteTask(id) {
+      await fetch(`http://localhost:3000/tasks/${id}`, {
+        method: 'DELETE'
+      });
+      fetchTasks();
+    }
+  
+    window.onload = fetchTasks;
+  </script>  
+>>>>>>> 9d10212 (first commit)
 </body>
 </html>
